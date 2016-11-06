@@ -39,15 +39,17 @@ var library = {
     var trackString = track.id + ": " + track.name + " by " + track.artist + "(" + track.album + ")";
     return trackString;
   },
+  // functions that call printTrack via "this.printTrack" break when "library" not used explicitly below - scope issue?
   printTrack: function(trackId) {
-    var track = this.tracks[trackId];
-    console.log(this.generateTrackString(track));
+    var tracks = library.tracks[trackId];
+    console.log(library.generateTrackString(tracks));
   },
   printAllTracks: function(playlistId) {
     var playlists = this.playlists
     var printTrack = this.printTrack;
+    var tracks = this.tracks;
     if (!playlistId) {
-      for (var trackId in lib.tracks) {
+      for (var trackId in tracks) {
         printTrack(trackId);
       }
     } else {
@@ -60,11 +62,86 @@ var library = {
   printPlaylist: function(playlistId) {
     this.printOnePlaylist(playlistId);
     this.printAllTracks(playlistId);
+  },
+  nextId: function (type) {
+    var biggest = 0;
+    var returnStr = "";
+    var idFor;
+    var trackNumber = Object.keys(this.tracks);
+    var playlistNumber = Object.keys(this.playlists);
+
+    switch(type) {
+      case "t":
+        idFor = trackNumber;
+        returnStr = "t";
+        break;
+      case "p":
+        idFor = playlistNumber;
+        returnStr = "p";
+        break;
+      default:
+        console.log("You didn't select a type!");
     }
+    idFor.forEach(function(track) {
+      var remFirstLet = track.slice(1);
+      if (remFirstLet > biggest) {
+        biggest = Number(remFirstLet);
+      }
+    });
+    if (biggest < 10) {
+      returnStr += "0" + (biggest + 1);
+    } else {
+      returnStr += (biggest + 1);
+    }
+    return returnStr;
+  },
+  addTrack: function (name, artist, album) {
+    var newId = this.nextId("t");
+    var newTrack = { id: newId,
+                     name: name,
+                     artist: artist,
+                     album: album
+                   };
+    var trackObj = this.tracks[newId];
+    trackObj = newTrack;
+    console.log("Added track: ", trackObj);
+  },
+  addPlaylist: function (name) {
+    var newId = this.nextId("p");
+    var newPlaylist = { id: newId,
+                        name: name,
+                        tracks: []
+                      };
+    var playObj = library.playlists[newId];
+    playObj = newPlaylist;
+    console.log("Added playlist: ", playObj)
+
+  },
+  printSearchResults: function(query) {
+    var queryRegExp = new RegExp(query, "i");
+    var tracks = this.tracks;
+    var trackString = this.generateTrackString;
+    for (var trackId in tracks) {
+      var song = tracks[trackId];
+      var str = trackString(song);
+
+      if (str.search(queryRegExp) > -1) {
+        console.log(str);
+      }
+    }
+  }
 };
 
-// library.printPlaylist("p01")
+/*
+TESTS:
+*/
+
 // library.printTrack("t02")
 // library.printAllTracks();
-// library.listPlaylists();
 // library.printOnePlaylist("p01");
+// library.listPlaylists();
+// library.printPlaylist("p01")
+// console.log(library.nextId("t"));
+// console.log(library.nextId("p"));
+// library.addTrack("The first song", "The Artist", "almost too meta");
+// library.printSearchResults("a");

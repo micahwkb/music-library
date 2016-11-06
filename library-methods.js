@@ -45,7 +45,7 @@ var library = {
     console.log(library.generateTrackString(tracks));
   },
   printAllTracks: function(playlistId) {
-    var playlists = this.playlists
+    var playlists = this.playlists;
     var printTrack = this.printTrack;
     var tracks = this.tracks;
     if (!playlistId) {
@@ -114,8 +114,7 @@ var library = {
                       };
     var playObj = library.playlists[newId];
     playObj = newPlaylist;
-    console.log("Added playlist: ", playObj)
-
+    console.log("Added playlist: ", playObj);
   },
   printSearchResults: function(query) {
     var queryRegExp = new RegExp(query, "i");

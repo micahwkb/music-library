@@ -40,9 +40,12 @@ var library = {
     return trackString;
   },
   // functions that call printTrack via "this.printTrack" break when "library" not used explicitly below - scope issue?
+  // ANSWER ==> scope CONTEXT issue... assign scope as below, issue solved!
   printTrack: function(trackId) {
-    var tracks = library.tracks[trackId];
-    console.log(library.generateTrackString(tracks));
+    return function() {
+    var tracks = this.tracks[trackId];
+    console.log(this.generateTrackString(tracks));
+    }.bind(this);
   },
   printAllTracks: function(playlistId) {
     var playlists = this.playlists;
